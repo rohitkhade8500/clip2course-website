@@ -58,6 +58,7 @@ export async function extractFromYouTube(
     name: string
     run: () => Promise<TranscriptSegment[]>
   }> = [
+    { name: 'VercelAPI', run: () => fetchViaServerlessApi(videoId) },
     { name: 'InnerTube', run: () => fetchViaInnerTube(videoId) },
     { name: 'Invidious', run: () => fetchFromInvidiousAPI(videoId) },
   ]
@@ -107,7 +108,30 @@ interface InnerTubeCaptionTrack {
 }
 
 /**
- * PRIMARY METHOD: YouTube InnerTube player API using the ANDROID client.
+ * PRIMARY METHOD (Vercel): Uses the new serverless API endpoint backed by youtube-transcript
+ */
+async function fetchViaServerlessApi(videoId: string): Promise<TranscriptSegment[]> {
+  const response = await fetch(`/api/transcript?videoId=${videoId}`)
+  if (!response.ok) {
+    throw new Error(`Serverless API failed: ${response.status}`)
+  }
+  
+  const data = await response.json()
+  if (data.error) throw new Error(data.error)
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error('No transcript returned')
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((item: any) => ({
+    text: item.text,
+    startTime: item.offset / 1000,
+    endTime: (item.offset + item.duration) / 1000,
+  }))
+}
+
+/**
+ * SECONDARY METHOD: YouTube InnerTube player API using the ANDROID client.
  *
  * The public web page's caption URLs return empty bodies due to YouTube's
  * proof-of-origin requirement. The ANDROID client returns caption URLs that
