@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Play, Zap, BookOpen, Loader2 } from 'lucide-react'
 import { submitToWeb3Forms } from '../utils/web3forms'
 import { sendWaitlistConfirmation } from '../utils/emailjs'
-import Marquee from './Marquee'
 
 export default function Hero() {
 
@@ -134,10 +133,6 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Marquee */}
-        <div className="mt-16 w-full max-w-[100vw] overflow-hidden fade-in-up" style={{ animationDelay: '0.5s' }}>
-          <Marquee />
-        </div>
       </div>
     </section>
   )
