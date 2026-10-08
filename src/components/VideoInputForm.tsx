@@ -284,6 +284,19 @@ export default function VideoInputForm({ onSubmit, isLoading = false }: VideoInp
             video files (.mp4, .webm, .ogg, .m4v, .mov) are transcribed in your
             browser.
           </p>
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => { 
+                setUrl('https://www.youtube.com/watch?v=DEMO_CLIP2COURSE')
+                validateUrl('https://www.youtube.com/watch?v=DEMO_CLIP2COURSE') 
+              }}
+              className="text-xs font-semibold text-primary hover:text-primary-dark underline flex items-center gap-1"
+            >
+              <Sparkles className="w-3 h-3" />
+              Try Demo Video (Bypasses YouTube Blocks)
+            </button>
+          </div>
         </div>
       )}
 
