@@ -112,12 +112,17 @@ interface InnerTubeCaptionTrack {
  */
 async function fetchViaServerlessApi(videoId: string): Promise<TranscriptSegment[]> {
   const response = await fetch(`/api/transcript?videoId=${videoId}`)
-  if (!response.ok) {
+  let data
+  try {
+    data = await response.json()
+  } catch {
     throw new Error(`Serverless API failed: ${response.status}`)
   }
-  
-  const data = await response.json()
-  if (data.error) throw new Error(data.error)
+
+  if (!response.ok || data.error) {
+    throw new Error(data.error || `Serverless API failed: ${response.status}`)
+  }
+
   if (!Array.isArray(data) || data.length === 0) {
     throw new Error('No transcript returned')
   }

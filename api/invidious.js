@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   // Rewrite /api/invidious/* to https://inv.nadeko.net/*
   // We can just get the path after /api/invidious/
   const urlPath = req.url.replace('/api/invidious', '');
-  const targetUrl = `https://inv.nadeko.net${urlPath}`;
+  const targetUrl = `https://invidious.nerdvpn.de${urlPath}`;
 
   try {
     const fetchRes = await fetch(targetUrl, {
