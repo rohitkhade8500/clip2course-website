@@ -734,12 +734,15 @@ export function isYouTubeUrl(url: string): boolean {
 }
 
 /**
- * Creates an LLMProviderChain with HuggingFace and Groq providers
- * using environment variables for API keys.
+ * Creates an LLMProviderChain with HuggingFace and Groq providers.
+ * Tries to use keys from localStorage first (BYOK), then falls back to environment variables.
  */
 export function createLLMChain(): LLMProviderChain {
-  const hfKey = import.meta.env.VITE_HF_API_KEY || ''
-  const groqKey = import.meta.env.VITE_GROQ_API_KEY || ''
+  const localHfKey = localStorage.getItem('clip2course_hf_key') || ''
+  const localGroqKey = localStorage.getItem('clip2course_groq_key') || ''
+
+  const hfKey = localHfKey || import.meta.env.VITE_HF_API_KEY || ''
+  const groqKey = localGroqKey || import.meta.env.VITE_GROQ_API_KEY || ''
 
   return new LLMProviderChain([
     new HuggingFaceProvider(hfKey),

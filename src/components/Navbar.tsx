@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Menu, X, Sparkles, Sun, Moon, Monitor, User } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
 import { useAuth } from '../context/AuthContext'
+import ApiKeysModal from './ApiKeysModal'
+import { Settings } from 'lucide-react'
 
 const navLinks = [
   { label: 'About Us', href: '#about-us' },
@@ -17,6 +19,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
+  const [apiKeysOpen, setApiKeysOpen] = useState(false)
   const { theme, setTheme } = useTheme()
   const { status, user, logout } = useAuth()
   const navigate = useNavigate()
@@ -103,6 +106,16 @@ export default function Navbar() {
               ))}
             </div>
 
+            {/* API Keys Button */}
+            <button
+              onClick={() => setApiKeysOpen(true)}
+              className="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
+              aria-label="API Keys Settings"
+              title="API Keys Settings"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+
             {checking ? null : signedIn ? (
               <>
                 <span
@@ -176,6 +189,14 @@ export default function Navbar() {
                 </button>
               ))}
             </div>
+
+            <button
+              onClick={() => setApiKeysOpen(true)}
+              className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
+              aria-label="API Keys Settings"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
 
             <button
               id="mobile-menu-toggle"
@@ -252,7 +273,10 @@ export default function Navbar() {
             </div>
           </div>
         )}
+        )}
       </div>
+
+      <ApiKeysModal isOpen={apiKeysOpen} onClose={() => setApiKeysOpen(false)} />
     </nav>
   )
 }

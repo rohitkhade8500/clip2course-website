@@ -113,12 +113,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     mounted.current = true
 
     void (async () => {
+      await new Promise(resolve => setTimeout(resolve, 300))
       try {
-        adopt(toPublicUser(await apiClient.get<unknown>(ME_PATH)))
+        const data = localStorage.getItem('clip2course_user')
+        if (data) {
+          adopt(JSON.parse(data) as PublicUser)
+        } else {
+          clear()
+        }
       } catch {
-        // Either a 401 (genuinely signed out) or the server was unreachable.
-        // With no cached user there is nothing to preserve, so both land on
-        // anonymous; ProtectedRoute then sends protected paths to /login.
         clear()
       }
     })()
@@ -152,11 +155,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await apiClient.post<unknown>(LOGOUT_PATH)
-    } catch {
-      // Logout is idempotent server-side (Requirement 3.4) and the local user
-      // must go regardless: failing to reach the server is not a reason to
-      // leave someone signed in on a shared browser (Requirement 3.3).
+      localStorage.removeItem('clip2course_user')
+      await new Promise(resolve => setTimeout(resolve, 300))
     } finally {
       claimed.current.clear()
       clear()
@@ -182,71 +182,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 // ---------------------------------------------------------------------------
-// Internals
+// Internals (Mock Auth for Demo)
 // ---------------------------------------------------------------------------
 
-/**
- * Shared body of login and register.
- *
- * Registration with an already-registered address returns the same
- * success-shaped response as a new account but without a user or a session
- * cookie (Requirement 1.4). That case is indistinguishable from here by
- * design, so it simply resolves as anonymous — the caller sees no error and
- * cannot learn whether the address existed.
- */
+const LOCAL_STORAGE_USER_KEY = 'clip2course_user'
+
 async function authenticate(
   path: string,
   body: { email: string; password: string; displayName?: string },
   adopt: (user: PublicUser) => void,
   clear: () => void
 ): Promise<void> {
-  let payload: unknown
+  // Simulate network delay
+  await new Promise((resolve) => setTimeout(resolve, 800))
+
+  const user: PublicUser = {
+    id: body.email, // using email as ID for the mock
+    email: body.email,
+    displayName: body.displayName || body.email.split('@')[0],
+  }
+
+  localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(user))
+  adopt(user)
+}
+
+/** Reads user from local storage. */
+function readLocalUser(): PublicUser | null {
   try {
-    payload = await apiClient.post<unknown>(path, body)
-  } catch (error) {
-    // A rejected credential means anonymous; an unreachable server means
-    // unknown, so only the 401 clears anything (Requirement 10.2).
-    if (isUnauthorized(error)) clear()
-    throw error
+    const data = localStorage.getItem(LOCAL_STORAGE_USER_KEY)
+    if (!data) return null
+    return JSON.parse(data) as PublicUser
+  } catch {
+    return null
   }
-
-  const next = readUser(payload)
-  if (next) {
-    adopt(next)
-    return
-  }
-
-  clear()
-}
-
-/** True only for a real 401 — never for a network failure. */
-function isUnauthorized(error: unknown): boolean {
-  return error instanceof ApiError && error.status === 401 && !error.isNetworkError
-}
-
-/** Reads `{ user }` or a bare user object, returning null when neither fits. */
-function readUser(payload: unknown): PublicUser | null {
-  if (typeof payload !== 'object' || payload === null) return null
-
-  const wrapped = (payload as { user?: unknown }).user
-  const candidate = wrapped === undefined ? payload : wrapped
-
-  if (typeof candidate !== 'object' || candidate === null) return null
-
-  const { id, email, displayName } = candidate as Record<string, unknown>
-  if (typeof id !== 'string' || id.length === 0) return null
-  if (typeof email !== 'string') return null
-
-  return {
-    id,
-    email,
-    displayName: typeof displayName === 'string' ? displayName : email,
-  }
-}
-
-/** Same as {@link readUser} but treats a missing user as a failed response. */
-function toPublicUser(payload: unknown): PublicUser {
-  const parsed = readUser(payload)
-  if (!parsed) throw new Error('Malformed user payload')
-  return parsed
 }
