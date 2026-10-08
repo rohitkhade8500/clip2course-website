@@ -273,7 +273,6 @@ export default function Navbar() {
             </div>
           </div>
         )}
-        )}
       </div>
 
       <ApiKeysModal isOpen={apiKeysOpen} onClose={() => setApiKeysOpen(false)} />

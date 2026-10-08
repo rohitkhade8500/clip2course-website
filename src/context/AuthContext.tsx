@@ -26,14 +26,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { ApiError, apiClient } from '../services/apiClient'
 import { claimUnownedData } from '../services/courseStore'
-
-/** Endpoints, relative to the `/api` prefix apiClient adds. */
-const ME_PATH = '/auth/me'
-const LOGIN_PATH = '/auth/login'
-const REGISTER_PATH = '/auth/register'
-const LOGOUT_PATH = '/auth/logout'
 
 /** `'checking'` is the pre-answer state, not an error state. */
 export type AuthStatus = 'checking' | 'authenticated' | 'anonymous'
@@ -134,23 +127,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(
     async (email: string, password: string) => {
       // `password` is read straight into the request body and never retained.
-      await authenticate(LOGIN_PATH, { email, password }, adopt, clear)
+      await authenticate({ email, password }, adopt)
     },
-    [adopt, clear]
+    [adopt]
   )
 
   const register = useCallback(
     async (email: string, password: string, displayName?: string) => {
       await authenticate(
-        REGISTER_PATH,
         displayName === undefined
           ? { email, password }
           : { email, password, displayName },
-        adopt,
-        clear
+        adopt
       )
     },
-    [adopt, clear]
+    [adopt]
   )
 
   const logout = useCallback(async () => {
@@ -164,9 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [clear])
 
   const handleUnauthorized = useCallback(
-    (error: unknown) => {
-      if (!isUnauthorized(error)) return false
-
+    (_error: unknown) => {
       clear()
       return true
     },
@@ -188,10 +177,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 const LOCAL_STORAGE_USER_KEY = 'clip2course_user'
 
 async function authenticate(
-  path: string,
   body: { email: string; password: string; displayName?: string },
-  adopt: (user: PublicUser) => void,
-  clear: () => void
+  adopt: (user: PublicUser) => void
 ): Promise<void> {
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 800))
@@ -204,15 +191,4 @@ async function authenticate(
 
   localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(user))
   adopt(user)
-}
-
-/** Reads user from local storage. */
-function readLocalUser(): PublicUser | null {
-  try {
-    const data = localStorage.getItem(LOCAL_STORAGE_USER_KEY)
-    if (!data) return null
-    return JSON.parse(data) as PublicUser
-  } catch {
-    return null
-  }
 }
