@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/invidious/(.*)",
+      "destination": "/api/invidious"
+    },
+    {
+      "source": "/api/dailymotion/(.*)",
+      "destination": "/api/dailymotion"
+    },
+    {
+      "source": "/api/vimeo/(.*)",
+      "destination": "/api/vimeo"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
