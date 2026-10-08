@@ -401,7 +401,20 @@ export class LLMProviderChain {
  * - Returns valid JSON matching the CourseSection format
  */
 export function fallbackLocalGeneration(prompt: string): string {
-  const sentences = extractSentences(prompt)
+  // Extract the transcript text to avoid generating questions about the prompt instructions
+  let textToUse = prompt
+  const match = prompt.match(/--- TRANSCRIPT START ---\n([\s\S]*?)\n--- TRANSCRIPT END ---/)
+  if (match && match[1]) {
+    textToUse = match[1]
+  } else {
+    // Fallback for older prompt format
+    const contentMatch = prompt.match(/Content: "([\s\S]*?)"/)
+    if (contentMatch && contentMatch[1]) {
+      textToUse = contentMatch[1]
+    }
+  }
+
+  const sentences = extractSentences(textToUse)
 
   const quizzes = generateFallbackQuizzes(sentences)
   const flashcards = generateFallbackFlashcards(sentences)
