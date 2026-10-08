@@ -174,7 +174,7 @@ export interface ParsedSectionContent {
  * System prompt for course generation LLM calls.
  */
 const COURSE_GENERATION_SYSTEM_PROMPT =
-  'You are an educational content generator. Given transcript text, produce structured interactive learning materials as JSON. Respond with ONLY valid JSON — no markdown, no explanation, no extra text.'
+  'You are an expert educational content generator. Your task is to analyze the provided transcript and produce structured interactive learning materials as JSON. You MUST NOT reference the prompt instructions in your output. If the content is non-educational (e.g. music lyrics or casual chat), create questions based strictly on the literal text provided. Respond with ONLY valid JSON — no markdown, no explanation, no extra text.'
 
 /**
  * Builds an LLM prompt to generate course content from section text.
@@ -202,18 +202,20 @@ export function buildCoursePrompt(
     .filter(Boolean)
     .join('\n- ')
 
-  return `Based on the following educational content, generate interactive learning materials.
+  return `Analyze the following transcript and generate interactive learning materials in JSON format.
 
-Content: "${text.slice(0, preset.promptChars)}"
+--- TRANSCRIPT START ---
+${text.slice(0, preset.promptChars)}
+--- TRANSCRIPT END ---
 
 Generate a JSON object with:
 - "title": A short section title (max 60 chars)
-- "summary": 2-3 sentence summary of key concepts
+- "summary": 2-3 sentence summary of the transcript
 - ${typesRequested}
 
 ${options.interactiveTypes.includes('quiz') ? `Each quiz question should have:
   - "type": "multiple-choice" | "true-false" | "fill-blank"
-  - "question": The question text
+  - "question": The question text (DO NOT ask about the prompt instructions, ask about the TRANSCRIPT)
   - "options": Array of 4 choices (for multiple-choice)
   - "correctAnswer": The correct answer (must be one of the options for multiple-choice)
   - "explanation": Why this answer is correct
@@ -227,7 +229,7 @@ ${options.interactiveTypes.includes('quiz') ? `Each quiz question should have:
   - "solution": Correct order/matches
 ` : ''}
 Difficulty level: ${options.difficulty}
-Respond with ONLY valid JSON, no markdown.`
+CRITICAL: Respond with ONLY valid JSON. Your output must start with { and end with }. Do not include markdown code blocks.`
 }
 
 /**
