@@ -106,68 +106,13 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* API Keys Button */}
-            <button
-              onClick={() => setApiKeysOpen(true)}
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
-              aria-label="API Keys Settings"
-              title="API Keys Settings"
+            <a
+              href="#waitlist-form"
+              className="glow-btn px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-light transition-all"
+              id="nav-cta"
             >
-              <Settings className="w-5 h-5" />
-            </button>
-
-            {checking ? null : signedIn ? (
-              <>
-                <span
-                  className="flex items-center gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap"
-                  id="nav-user"
-                >
-                  <User className="w-4 h-4 text-primary-light" />
-                  {user.displayName}
-                </span>
-
-                <Link
-                  to="/app/courses"
-                  className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap"
-                >
-                  My Courses
-                </Link>
-
-                <button
-                  type="button"
-                  onClick={handleLogout}
-                  disabled={signingOut}
-                  className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap cursor-pointer disabled:opacity-60"
-                >
-                  {signingOut ? 'Logging out...' : 'Log out'}
-                </button>
-
-                <Link
-                  to="/app/dashboard"
-                  className="glow-btn px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-light transition-all"
-                  id="nav-cta"
-                >
-                  Dashboard
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors whitespace-nowrap"
-                >
-                  Sign in
-                </Link>
-
-                <Link
-                  to="/register"
-                  className="glow-btn px-5 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-light transition-all"
-                  id="nav-cta"
-                >
-                  Create account
-                </Link>
-              </>
-            )}
+              Join waitlist &rarr;
+            </a>
           </div>
 
           {/* Mobile Controls */}
@@ -223,53 +168,13 @@ export default function Navbar() {
                   {link.label}
                 </a>
               ))}
-              {checking ? null : signedIn ? (
-                <>
-                  <span className="flex items-center gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 px-2 py-1.5">
-                    <User className="w-4 h-4 text-primary-light" />
-                    {user.displayName}
-                  </span>
-                  <Link
-                    to="/app/courses"
-                    onClick={() => setMobileOpen(false)}
-                    className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors px-2 py-1.5"
-                  >
-                    My Courses
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    disabled={signingOut}
-                    className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors px-2 py-1.5 text-left cursor-pointer disabled:opacity-60"
-                  >
-                    {signingOut ? 'Logging out...' : 'Log out'}
-                  </button>
-                  <Link
-                    to="/app/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="glow-btn px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold text-center hover:bg-primary-light transition-all mt-2"
-                  >
-                    Dashboard
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors px-2 py-1.5"
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setMobileOpen(false)}
-                    className="glow-btn px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold text-center hover:bg-primary-light transition-all mt-2"
-                  >
-                    Create account
-                  </Link>
-                </>
-              )}
+              <a
+                href="#waitlist-form"
+                onClick={() => setMobileOpen(false)}
+                className="glow-btn px-5 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold text-center hover:bg-primary-light transition-all mt-2"
+              >
+                Join waitlist &rarr;
+              </a>
             </div>
           </div>
         )}

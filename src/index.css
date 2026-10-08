@@ -288,6 +288,16 @@ textarea:focus {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+/* ── Marquee Animation ────────────────────────────────── */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
 /* ── Light mode alternating section backgrounds ───────── */
 .light section:nth-of-type(even) {
   background-color: rgba(241, 245, 249, 0.6);

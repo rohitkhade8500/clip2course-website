@@ -3,14 +3,9 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Play, Zap, BookOpen, Loader2 } from 'lucide-react'
 import { submitToWeb3Forms } from '../utils/web3forms'
 import { sendWaitlistConfirmation } from '../utils/emailjs'
-import { useAuth } from '../context/AuthContext'
+import Marquee from './Marquee'
 
 export default function Hero() {
-  const { status: authStatus } = useAuth()
-  // Requirement 7.8: a signed-in visitor's primary CTA is their dashboard, not
-  // a fresh start. 'checking' keeps the anonymous copy, which is also the
-  // correct destination once ProtectedRoute has resolved the session.
-  const signedIn = authStatus === 'authenticated'
 
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -76,22 +71,7 @@ export default function Hero() {
           structured modules, quizzes, summaries, and study notes — in minutes, not hours.
         </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 fade-in-up" style={{ animationDelay: '0.25s' }}>
-          <Link
-            to={signedIn ? '/app/dashboard' : '/app/create'}
-            className="glow-btn pulse-glow px-8 py-3.5 rounded-xl bg-primary text-white font-semibold text-base flex items-center justify-center gap-2 hover:bg-primary-light transition-all"
-          >
-            {signedIn ? 'Go to Dashboard' : "Get Started — It's Free"}{' '}
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-          <Link
-            to="/app/courses"
-            className="px-8 py-3.5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold text-base hover:bg-slate-100 dark:hover:bg-surface-light transition-all"
-          >
-            My Courses
-          </Link>
-        </div>
+        {/* Main CTA replaced by waitlist form below */}
 
         {/* Waitlist Form */}
         <form
@@ -154,65 +134,9 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Mockup Preview */}
-        <div className="mt-16 max-w-3xl mx-auto fade-in-up" style={{ animationDelay: '0.5s' }}>
-          <div className="glass-card rounded-2xl p-1">
-            <div className="rounded-xl bg-white dark:bg-surface-light overflow-hidden">
-              {/* Browser chrome */}
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-200 dark:border-slate-700/50">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/60" />
-                </div>
-                <div className="flex-1 mx-4">
-                  <div className="bg-slate-100 dark:bg-surface rounded-md px-3 py-1 text-xs text-slate-500 text-center">
-                    app.clip2course.online/dashboard
-                  </div>
-                </div>
-              </div>
-              {/* Dashboard mockup */}
-              <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-slate-50 dark:bg-surface rounded-lg p-4 border border-slate-200 dark:border-slate-800">
-                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center mb-3">
-                    <Play className="w-4 h-4 text-primary-light" />
-                  </div>
-                  <div className="text-sm font-medium text-slate-900 dark:text-white mb-1">Video Input</div>
-                  <div className="text-xs text-slate-500">Paste link or upload</div>
-                  <div className="mt-3 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full w-3/4 bg-gradient-to-r from-primary to-accent rounded-full" />
-                  </div>
-                </div>
-                <div className="bg-slate-50 dark:bg-surface rounded-lg p-4 border border-slate-200 dark:border-slate-800">
-                  <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center mb-3">
-                    <Zap className="w-4 h-4 text-accent-light" />
-                  </div>
-                  <div className="text-sm font-medium text-slate-900 dark:text-white mb-1">AI Processing</div>
-                  <div className="text-xs text-slate-500">Generating course...</div>
-                  <div className="mt-3 flex gap-1">
-                    {[...Array(4)].map((_, i) => (
-                      <div key={i} className="h-1.5 flex-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-accent rounded-full"
-                          style={{ width: `${(i + 1) * 25}%` }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="bg-slate-50 dark:bg-surface rounded-lg p-4 border border-slate-200 dark:border-slate-800">
-                  <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center mb-3">
-                    <BookOpen className="w-4 h-4 text-green-400" />
-                  </div>
-                  <div className="text-sm font-medium text-slate-900 dark:text-white mb-1">Course Ready</div>
-                  <div className="text-xs text-slate-500">5 modules · 12 quizzes</div>
-                  <div className="mt-3 h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full w-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Marquee */}
+        <div className="mt-16 w-full max-w-[100vw] overflow-hidden fade-in-up" style={{ animationDelay: '0.5s' }}>
+          <Marquee />
         </div>
       </div>
     </section>
