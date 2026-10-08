@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react'
-import { Link } from 'react-router-dom'
+
 import { ArrowRight, Play, Zap, BookOpen, Loader2 } from 'lucide-react'
 import { submitToWeb3Forms } from '../utils/web3forms'
 import { sendWaitlistConfirmation } from '../utils/emailjs'

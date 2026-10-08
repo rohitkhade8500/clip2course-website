@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Menu, X, Sparkles, Sun, Moon, Monitor, User } from 'lucide-react'
+import { Menu, X, Sparkles, Sun, Moon, Monitor } from 'lucide-react'
 import { useTheme } from '../context/ThemeContext'
-import { useAuth } from '../context/AuthContext'
 import ApiKeysModal from './ApiKeysModal'
 import { Settings } from 'lucide-react'
 
@@ -18,35 +16,14 @@ const navLinks = [
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [signingOut, setSigningOut] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
   const { theme, setTheme } = useTheme()
-  const { status, user, logout } = useAuth()
-  const navigate = useNavigate()
-
-  // 'checking' is not "signed out": rendering the anonymous links here would
-  // flash Sign in at a user who is in fact signed in (Requirement 6.7), so the
-  // auth slot stays empty until the session check settles.
-  const checking = status === 'checking'
-  const signedIn = status === 'authenticated' && user !== null
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-
-  async function handleLogout() {
-    setSigningOut(true)
-    try {
-      await logout()
-      setMobileOpen(false)
-      // Requirement 3.3: land back on the public page once the user is cleared
-      navigate('/')
-    } finally {
-      setSigningOut(false)
-    }
-  }
 
   const themeOptions: { value: 'light' | 'dark' | 'system'; icon: typeof Sun; label: string }[] = [
     { value: 'light', icon: Sun, label: 'Light' },
